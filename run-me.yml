@@ -1,0 +1,57 @@
+---
+  - hosts: project_1:project_2:project_3
+    become: yes
+    become_user: root
+
+    tasks:
+     - name: Install curl
+       apt: pkg=curl update_cache=true
+
+     - name: Install docker
+       apt: pkg=docker update_cache=true
+
+     - name: Install docker compose
+       apt: pkg=docker-compose update_cache=true
+     
+     - name: Ufw open port 80
+       ufw: rule=allow port=80 proto=tcp
+
+     - name: Ufw open port 8080
+       ufw: rule=allow port=8080 proto=tcp
+
+     - name: Ufw open port 1834
+       ufw: rule=allow port=1834 proto=tcp
+
+     - name: make dir
+       file: path=/skillcloud-nginx state=directory
+
+     - name: copy file index.html
+       copy: src=/wsr-skillcloud/index.html dest=/skillcloud-nginx/index.html
+
+     - name: copy file nginx.conf
+       copy: src=/wsr-skillcloud/nginx.conf dest=/skillcloud-nginx/nginx.conf
+
+     - name: copy file docker-compose.sh
+       copy: src=/wsr-skillcloud/docker-compose.sh dest=/skillcloud-nginx/docker-compose.sh
+
+     - name: copy file docker-compose.yml
+       copy: src=/wsr-skillcloud/docker-compose.yml dest=/skillcloud-nginx/docker-compose.yml
+
+     - name: copy file Dockerfile-balance
+       copy: src=/wsr-skillcloud/Dockerfile-balance dest=/skillcloud-nginx/Dockerfile-balance
+
+     - name: copy file Dockerfile-site
+       copy: src=/wsr-skillcloud/Dockerfile-site dest=/skillcloud-nginx/Dockerfile-site
+
+     - name: restart ssh service
+       service: name=ssh state=restarted
+
+     - name: restart ufw service
+       service: name=ufw state=restarted
+
+#     - name: add user
+#       user: name=Webdeveloper password=$6$157$FgNN7nCoHmd0bloGqkiUCQXYsHSa/5Oy2m0YElmz.sBHLzLwOkcG0YV24HuacQPyxtegfOokTKvnkRDYRnICD1
+    
+#     - name: add key
+#       authorized_key: user=Webdeveloper state=present key=/wsr-skillcloud/Users/privvars.yml 
+       
